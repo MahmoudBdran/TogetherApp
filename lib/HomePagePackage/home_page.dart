@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:together/constatPackage/friends.dart';
+import 'package:together/firebasePackage/auth.dart';
 import 'package:together/modules/FriendsPackage/friends_screen.dart';
 import 'package:together/modules/MessagesPackage/messages_screen.dart';
 import 'package:together/modules/SettingsScreen/settings_screen.dart';
 import 'package:together/profilePackage/profile_screen.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -24,17 +25,27 @@ class _HomePageState extends State<HomePage> {
 
       backgroundColor: Color(0xff300a6a),
       key: scaffoldKey,
-      appBar: AppBar(leading: IconButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));}, color:Colors.grey,icon: Container(
-        height: 50,
-        width: 50,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-                image: NetworkImage(Users[0]['image']),
-                fit: BoxFit.cover
-            )
-        ),
-      )),
+      appBar: AppBar(leading: FutureBuilder(
+          future: userInfo.doc(auth.currentUser!.uid).get(),
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if(snapshot.hasData){
+          return IconButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen()));}, color:Colors.grey,icon: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                    image: NetworkImage(snapshot.data!['avatar']),
+                    fit: BoxFit.cover
+                )
+            ),
+          ));
+
+        }else{
+          return SizedBox(height: 50,width: 50,);
+        }
+          }
+      ),
         backgroundColor: Color(0xff300a6a),
         title: Text(titles[currentIndex],style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -55,17 +66,18 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-          
+
         ],
       ),
       body: Container(
         decoration: BoxDecoration(
             color: Color(0xFFEEEEEE),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(0),
-                topRight: Radius.circular(0),
-                bottomLeft: Radius.circular(45),
-                bottomRight: Radius.circular(45))),
+            // borderRadius: BorderRadius.only(
+            //     topLeft: Radius.circular(0),
+            //     topRight: Radius.circular(0),
+            //     bottomLeft: Radius.circular(45),
+            //     bottomRight: Radius.circular(45))
+        ),
         child: screens[currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(

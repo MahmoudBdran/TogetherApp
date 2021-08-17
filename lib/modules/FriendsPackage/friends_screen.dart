@@ -5,7 +5,6 @@ import 'package:together/PersonProfilePackage/person_profile.dart';
 import 'package:together/constatPackage/friends.dart';
 
 class FriendsScreen extends StatefulWidget {
-  const FriendsScreen({Key? key}) : super(key: key);
 
   @override
   _FriendsScreenState createState() => _FriendsScreenState();
